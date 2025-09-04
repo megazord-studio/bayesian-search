@@ -7,6 +7,8 @@ A tiny, dependency-light Bayesian optimization helper built around:
 
 It’s designed for small experiments, educational purposes, and lightweight tuning loops without pulling in heavy dependencies.
 
+![Live plotter example](./assets/sceenshot.png)
+
 ## Quick start
 
 Install dependencies (managed via `uv`):
