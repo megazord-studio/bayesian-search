@@ -55,6 +55,9 @@ uv run python main.py
 - `expected_improvement(mu, var, best, xi=0.01)` -> np.ndarray
 - `bayesian_search(spec_cls, evaluate, config=BayesSearchConfig(), verbose=True)` -> dict
   - returns `{ "best_params": spec_instance, "best_score": float, "history": [{"score": float}, ...] }`
+  - Optional progress callback: set `config.callback` to a callable `(event, state)` to receive updates at `"start"`, `"init"`, `"iter"`, `"end"`.
+    - A tiny live plotter is provided: `from bayesian_search.bo_viz import LivePlotter`; pass `BayesSearchConfig(callback=LivePlotter())`. Requires matplotlib.
+    - The live plot shows two panels: top = scores and best-so-far with markers for new bests plus a stats box (evals, best, last, timing) and a brief in-figure description; bottom = bar chart of improvements (Δ best) to visualize convergence. By default the window stays open at the end for inspection (pass `LivePlotter(keep_open=False)` to disable blocking).
 
 ## Configuration tips
 

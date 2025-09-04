@@ -62,3 +62,7 @@ class BayesSearchConfig:
     noise: float = 1e-6
     xi: float = 0.01
     seed: Optional[int] = None
+    # Optional progress callback hooks; kept out of tests unless provided.
+    # Signature: on_event(event: str, state: dict) -> None
+    # Events: "start", "init", "iter", "end"
+    callback: Optional[Any] = None

@@ -36,6 +36,17 @@ def bayesian_search(
     X_vectors: List[np.ndarray] = []
     y_scores: List[float] = []
 
+    # optional callback helper
+    def _cb(event: str, **state: Any) -> None:
+        if getattr(config, "callback", None) is not None:
+            try:
+                config.callback(event, state)  # type: ignore[misc]
+            except Exception:
+                # Swallow callback errors to avoid breaking the search loop
+                pass
+
+    _cb("start")
+
     # initial random samples
     for i in range(config.n_init):
         p = enc.sample(rng)
@@ -46,6 +57,15 @@ def bayesian_search(
             print(
                 f"[init {i + 1}/{config.n_init}] score={score:.6f} params={p}"
             )
+        _cb(
+            "init",
+            i=i,
+            total=config.n_init,
+            params=p,
+            score=score,
+            best=float(max(y_scores)) if y_scores else float("nan"),
+            history=y_scores.copy(),
+        )
 
     X_train = np.vstack(X_vectors)
     y_train = np.array(y_scores, dtype=float)
@@ -78,11 +98,22 @@ def bayesian_search(
             print(
                 f"[iter {t + 1}/{config.n_iter}] best={best_so_far:.6f} -> new={score_next:.6f} params={p_next}"
             )
+        _cb(
+            "iter",
+            t=t,
+            total=config.n_iter,
+            params=p_next,
+            score=score_next,
+            best=float(np.max(y_train)),
+            history=y_train.tolist(),
+        )
 
     best_idx = int(np.argmax(y_train))
     best_params = enc.decode(X_train[best_idx])
-    return {
+    result = {
         "best_params": best_params,
         "best_score": float(y_train[best_idx]),
         "history": [{"score": float(s)} for s in y_train],
     }
+    _cb("end", **result)
+    return result
