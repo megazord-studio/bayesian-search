@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from time import sleep
 from typing import cast
 
 from sklearn.datasets import load_breast_cancer
@@ -64,7 +63,6 @@ def evaluate_my_model(p: MyParams) -> float:
     clf.fit(_X_train, _y_train)
     preds = clf.predict(_X_val)
     acc = accuracy_score(_y_val, preds)
-    sleep(0.2)
     return float(acc)
 
 
@@ -84,7 +82,7 @@ if __name__ == "__main__":
         MyParams,
         evaluate=evaluate_my_model,
         config=BayesSearchConfig(
-            n_init=6, n_iter=12, candidate_pool=512, seed=42, callback=callback
+            n_init=6, n_iter=100, candidate_pool=512, seed=42, callback=callback
         ),
         verbose=True,
     )
